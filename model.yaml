@@ -1,19 +1,32 @@
 Resources:
-  MyS3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: STD21020      
+  Database: 
+    Type: AWS::RDS::DBInstance
+    Properties: 
+      Engine: postgres
+      DBName: db
+      DBInstanceIdentifier: my-db-instance
+      MasterUsername: !Sub '{{resolve:ssm:/username}}'
+      MasterUserPassword: !Sub '{{resolve:ssm:/password}}'
+      AllocatedStorage: "1"
+      DBInstanceClass: db.t2.micro  
+  
+  Outputs:
+    DBName: 
+      Value: !Ref Database
 
-  MyBucketNameParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: BucketName         
-      Type: String
-      Value: !Ref MyS3Bucket         
+    DBUrl:
+      Value:
+        Fn::Join:
+          - ''
+          - - jdbc:postgresql://
+            - Fn::GetAtt:
+                -  Database
+                - Endpoint.Address
+            - ':'
+            - Fn::GetAtt:
+                - Database
+                - Endpoint.Port
+            - '/'
+            - !Ref DBName
 
-  MyBucketArnParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: BucketArn          
-      Type: String
-      Value: !GetAtt MyS3Bucket.Arn  
+    

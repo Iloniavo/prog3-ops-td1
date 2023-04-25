@@ -1,0 +1,22 @@
+name: cloudformation-deployment-test
+
+on: workflow_dispatch
+
+jobs: 
+  cloudformation-deployment-test:
+    runs-on: ubuntu-latest
+    
+    steps:   
+
+      - name: configure credentials
+        uses: aws-actions/
+        with: 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-3
+
+      - name: deploy RDS
+        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with: 
+          name: cloudformation-stack
+          template: model.yaml
