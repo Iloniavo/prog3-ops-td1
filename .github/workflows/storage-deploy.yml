@@ -7,7 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:   
-
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
       - name: configure credentials
         uses: aws-actions/configure-aws-credentials@13d241b293754004c80624b5567555c4a39ffbe3
         with: 
